@@ -209,7 +209,6 @@ export const logout = (req: Request, res: Response) => {
 export const session = async (req: Request, res: Response) => {
     try {
         // Get token from cookies or Authorization header
-        // const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
         const token = req.cookies?.token || req.headers.authorization?.split(' ')[1] || req.query.token;
 
         if (!token) {
@@ -265,3 +264,44 @@ export const session = async (req: Request, res: Response) => {
         return
     }
 };
+
+export const me = async (req: Request, res: Response) => {
+    try {
+        if (!(req as any).user) {
+            res.status(401).json({
+                message: "ACCESS DENIED"
+            })
+            return
+        }
+
+        const userId = (req as any).user.id;
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+
+        if (!user) {
+            res.status(400).json({
+                message: "Sorry User Not Found!"
+            })
+            return
+        }
+
+        const finalUserData = {
+            username: user?.username,
+            email: user?.email,
+        }
+
+        res.status(200).json({
+            finalUserData
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something Went Wrong, Please Try Again Later',
+            error
+        });
+    }
+}
