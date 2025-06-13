@@ -7,9 +7,10 @@ import cors from 'cors';
 import { PORT } from './config';
 import { UserRouter } from './routes/userRoutes';
 import { OauthRouter } from './oauth/main';
+import { AvatarRouter } from './routes/avatarRoutes';
+import { ProfileRouter } from './routes/profileRoutes';
 
 const app = express();
-
 
 app.use(cookieParser());
 app.use(express.json());
@@ -46,6 +47,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api/v1/auth/user", UserRouter);
+app.use("/api/v1/avatar", AvatarRouter);
+app.use("/api/v1/user/profile" , ProfileRouter);
 app.use("/auth", OauthRouter);
 
 

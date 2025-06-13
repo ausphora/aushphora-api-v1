@@ -22,7 +22,7 @@ export const signup = async (req: Request, res: Response) => {
 
         const { username, email, password } = result.data;
 
-        // Check if user already exists
+        // Check if user already exists, By email id!
         const existingUser = await prisma.user.findUnique({
             where: {
                 email: email
@@ -31,8 +31,22 @@ export const signup = async (req: Request, res: Response) => {
 
         if (existingUser) {
             res.status(400).json({
-                message: "User already exists in SWS Database!!"
+                message: "User already exists with this Email!!"
             });
+            return;
+        }
+
+        // checking username uniqueness
+        const existingUserName = await prisma.user.findUnique({
+            where: {
+                username: username
+            }
+        });
+
+        if (existingUserName) {
+            res.status(400).json({
+                message: "Username Already Taken!, Try another one"
+            })
             return;
         }
 

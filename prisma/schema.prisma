@@ -9,18 +9,61 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(cuid())
-  username            String   @unique
-  email               String   @unique
-  contactNumber       String   @default("NOT_PROVIDED")
+  id                  String           @id @default(cuid())
+  username            String           @unique
+  email               String           @unique
+  contactNumber       String           @default("NOT_PROVIDED")
   password            String
-  isMailVerified      Boolean  @default(false)
-  otpForVerification  String   @default("")
-  otpForResetPassword String   @default("")
-  provider            String   @default("local") // 'local', 'google', 'github'
+  isMailVerified      Boolean          @default(false)
+  otpForVerification  String           @default("")
+  otpForResetPassword String           @default("")
+  provider            String           @default("email") // 'email', 'google', 'github'
   providerId          String?
-  UserAddedAt         DateTime @default(now())
+  UserAddedAt         DateTime         @default(now())
   avatar              Avatar[]
+  profile             UserProfile[]
+  projectComment      ProjectComment[]
+}
+
+model UserProfile {
+  id            String    @id @default(cuid())
+  bio           String?
+  website       String?
+  github        String?
+  twitter       String?
+  instagram     String?
+  linkedin      String?
+  stackoverflow String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String    @unique
+  projects      Project[]
+}
+
+model Project {
+  id          String           @id @default(cuid())
+  title       String
+  description String
+  liveLink    String?
+  githubLink  String?
+  likes       Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  profile     UserProfile      @relation(fields: [profileId], references: [id])
+  profileId   String
+  comments    ProjectComment[]
+}
+
+model ProjectComment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
 }
 
 model Avatar {
