@@ -96,7 +96,8 @@ export const getProfile = async (req: Request, res: Response) => {
 
         if (!profile) {
             res.status(404).json({
-                message: "Profile not completed!!"
+                message: "Profile not completed!!",
+                status: "error"
             });
             return;
         }
